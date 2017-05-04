@@ -13,7 +13,6 @@ const (
 	stdWriterSizeIndex = 4 // size byte index in header
 
 	initialBufLen = 1024 * 2
-	maxMsgLen     = 1024 * 64
 )
 
 type reader struct {
@@ -80,9 +79,6 @@ func (r *reader) parse() error {
 	}
 
 	size := binary.BigEndian.Uint32(r.prefixBuf[stdWriterSizeIndex : stdWriterSizeIndex+4])
-	if size > maxMsgLen { // safeguard to prevent reading garbage
-		return fmt.Errorf("dlog: parsed msg too large: %d (max: %d) suspected garbage", size, maxMsgLen)
-	}
 
 	// grow buf if necessary
 	if int(size) > len(r.buf) {
